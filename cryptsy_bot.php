@@ -7,7 +7,7 @@ $stop_lost_percent = 0.98;
 $order_proportion = 0.7;
 $sell_proportion = 0.7;
 $btc_min = 0.01;
-$doge_min = 20000;
+$doge_min = 10000;
 
 $cryptsy = new Cryptsy( $key, $secret);
 
@@ -21,11 +21,14 @@ $my_doge = 0;
 $place_order = 1;
 $sell_count = 0;
 $buy_count = 0;
+$prev_price = -1;
 while( 1 )
 {
 	$cur_buy_price = $cryptsy->get_buy_price("DOGE/BTC");
 	$cur_sell_price = $cryptsy->get_sell_price("DOGE/BTC");
 	$my_orders = $cryptsy->get_orders("DOGE/BTC");
+	$my_btc = $cryptsy->get_wallet()["BTC"];
+	$my_doge = $cryptsy->get_wallet()["DOGE"];
 	// ATTENTION!!! only support 1 buy and 1 sell order
 	if( sizeof($my_orders) == 0)
 	{
@@ -34,15 +37,28 @@ while( 1 )
 			$cryptsy->create_buy_order("DOGE/BTC", $cur_sell_price*pow($stop_lost_percent,$buy_count+1), floor($my_btc/$cur_sell_price*$order_proportion));
 			$my_buy_price = $cur_buy_price;
 			$place_order = 1;
+			sleep(3);
 		}
 		if( $my_doge > 0)
 		{
-			$cryptsy->create_sell_order("DOGE/BTC", $cur_buy_price*pow($profit_percent,$sell_count+1), floor($my_doge*$sell_proportion));
+			//$cryptsy->create_sell_order("DOGE/BTC", $cur_buy_price*pow($profit_percent,$sell_count+1), floor($my_doge*$sell_proportion));
+			$cryptsy->create_sell_order("DOGE/BTC", $cur_buy_price*$profit_percent, floor($my_doge*$sell_proportion));
 			$place_order = 1;
+			sleep(3);
 		}
 	}
 	else if( sizeof($my_orders) == 1) // bought or sold an order, cancel old order and re-create all orders
 	{
+		if( sizeof($my_order) != 0)
+			$cur_price = show_success_trade($my_orders,$old_orders);
+
+		if( $cur_price == $prev_price)	// get the old data
+		{
+			$cryptsy->cancel_market_orders("DOGE/BTC");
+			continue;
+		}
+		$prev_price = $cur_price;
+
 		if( $my_orders[0]["ordertype"] == "Buy")
 		{
 			$sell_count++;
@@ -54,12 +70,7 @@ while( 1 )
 			$sell_count = 0;
 		}
 
-		show_success_trade($my_orders,$old_orders);
-
 		$cryptsy->cancel_market_orders("DOGE/BTC");
-
-		$my_btc = $cryptsy->get_wallet()["BTC"];
-		$my_doge = $cryptsy->get_wallet()["DOGE"];
 
 		if( $my_btc < $btc_min)	// sell some doge to earn more btc
 			$cryptsy->create_sell_order("DOGE/BTC", $cur_buy_price, floor($my_doge*pow($sell_proportion,$sell_count+1)));
@@ -76,7 +87,6 @@ while( 1 )
 	{
 		$my_btc = $cryptsy->get_wallet()["BTC"];
 		$my_doge = $cryptsy->get_wallet()["DOGE"];
-		$cur_buy_price = $cryptsy->get_buy_price("DOGE/BTC");
 		$counter = 0;
 		do
 		{
@@ -87,7 +97,7 @@ while( 1 )
 		} while( 0 );
 		$old_orders = $my_orders;
 		$total_btc = $my_btc + $my_doge*$cur_buy_price + $my_orders[0]["quantity"]*$cur_buy_price + $my_orders[1]["quantity"]*$cur_buy_price;
-		print("====================================================\n");
+		print("=================================================================================\n");
 		print($my_orders[0]["created"]." - total btc=".$total_btc." , cur_price=".$cur_buy_price.", my_btc=".$my_btc." , my_doge=".$my_doge." , b_c=".$buy_count." , s_c=".$sell_count."\n");
 		//print_r($my_orders);
 		show_order($my_orders);
@@ -105,18 +115,29 @@ function show_order($my_orders)
 
 function show_success_trade($my_orders, $old_orders)
 {
+	$price = 0;
 	if($my_orders[0]["ordertype"] == "Buy")
 	{
 		foreach($old_orders as $order)
 			if($order["ordertype"] == "Sell")
+			{
 				print($order["ordertype"]." ".$order["quantity"]." at price ".$order["price"]." , total btc ".$order["total"]."\n");
+				$price = $order["price"];
+			}
 	}
 	else if($my_orders[0]["ordertype"] == "Sell")	
 	{
 		foreach($old_orders as $order)
 			if($order["ordertype"] == "Buy")
+			{
 				print($order["ordertype"]." ".$order["quantity"]." at price ".$order["price"]." , total btc ".$order["total"]."\n");
+				$price = $order["price"];
+			}
 	}
+
+	if( $price != 0)
+		return $price;
+	return 0;
 }
 
 ?>
