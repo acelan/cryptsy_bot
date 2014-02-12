@@ -49,8 +49,7 @@ while( 1 )
 	}
 	else if( sizeof($my_orders) == 1) // bought or sold an order, cancel old order and re-create all orders
 	{
-		if( sizeof($my_order) != 0)
-			$cur_price = show_success_trade($my_orders,$old_orders);
+		$cur_price = show_success_trade($my_orders,$old_orders);
 
 		if( $cur_price == $prev_price)	// get the old data
 		{
@@ -115,14 +114,17 @@ function show_order($my_orders)
 
 function show_success_trade($my_orders, $old_orders)
 {
+	static $prev_price = 0;
 	$price = 0;
 	if($my_orders[0]["ordertype"] == "Buy")
 	{
 		foreach($old_orders as $order)
 			if($order["ordertype"] == "Sell")
 			{
-				print($order["ordertype"]." ".$order["quantity"]." at price ".$order["price"]." , total btc ".$order["total"]."\n");
 				$price = $order["price"];
+				if( $price != $prev_price)
+					print($order["ordertype"]." ".$order["quantity"]." at price ".$order["price"]." , total btc ".$order["total"]."\n");
+
 			}
 	}
 	else if($my_orders[0]["ordertype"] == "Sell")	
@@ -130,11 +132,13 @@ function show_success_trade($my_orders, $old_orders)
 		foreach($old_orders as $order)
 			if($order["ordertype"] == "Buy")
 			{
-				print($order["ordertype"]." ".$order["quantity"]." at price ".$order["price"]." , total btc ".$order["total"]."\n");
 				$price = $order["price"];
+				if( $price != $prev_price)
+					print($order["ordertype"]." ".$order["quantity"]." at price ".$order["price"]." , total btc ".$order["total"]."\n");
 			}
 	}
 
+	$prev_price = $price;
 	if( $price != 0)
 		return $price;
 	return 0;
