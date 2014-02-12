@@ -27,8 +27,11 @@ while( 1 )
 	$cur_buy_price = $cryptsy->get_buy_price("DOGE/BTC");
 	$cur_sell_price = $cryptsy->get_sell_price("DOGE/BTC");
 	$my_orders = $cryptsy->get_orders("DOGE/BTC");
-	$my_btc = $cryptsy->get_wallet()["BTC"];
-	$my_doge = $cryptsy->get_wallet()["DOGE"];
+	$my_wallet = get_my_wallet($cryptsy);
+	$my_btc = $my_wallet["BTC"];
+	$my_doge = $my_wallet["DOGE"];
+
+
 	// ATTENTION!!! only support 1 buy and 1 sell order
 	if( sizeof($my_orders) == 0)
 	{
@@ -84,8 +87,9 @@ while( 1 )
 
 	if( $place_order == 1)
 	{
-		$my_btc = $cryptsy->get_wallet()["BTC"];
-		$my_doge = $cryptsy->get_wallet()["DOGE"];
+		$my_wallet = get_my_wallet($cryptsy);
+		$my_btc = $my_wallet["BTC"];
+		$my_doge = $my_wallet["DOGE"];
 		$counter = 0;
 		do
 		{
@@ -104,6 +108,19 @@ while( 1 )
 	}
 
 	sleep(3);
+}
+
+function get_my_wallet($cryptsy)
+{
+	$my_wallet = $cryptsy->get_wallet();
+	// something wrong if we can get the BTC and/or DOGE coins
+	if(!array_key_exists("BTC", $my_wallet) || !array_key_exists("DOGE", $my_wallet))
+	{
+		sleep(1);
+		return get_my_wallet($cryptsy);
+	}
+
+	return $my_wallet;
 }
 
 function show_order($my_orders)
