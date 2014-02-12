@@ -149,12 +149,15 @@ class Cryptsy
 		// run the query
 		$res = curl_exec($ch);
 		
-		if ($res === false) throw new Exception('Could not get reply: '.curl_error($ch));
+		if ($res === false)
+		{
+			return $this->api_query($method,$req);
+		}
 		$dec = json_decode($res, true);
 		if (!$dec)
 		{
 			//print_r($res);
-			print($method." - Invalid data received!!! Re-submit request(".$query_count.")\n");
+			//print($method." - Invalid data received!!! Re-submit request(".$this->query_count.")\n");
 			return $this->api_query($method,$req);
 		}
 		$this->query_count = 0;
