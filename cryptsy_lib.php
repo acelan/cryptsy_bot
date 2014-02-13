@@ -65,8 +65,35 @@ class Cryptsy
 	 *	)
 	 */
 	public function get_depth($label) { return $this->api_query("depth", array("marketid" => $this->get_marketid($label))); }
-	public function get_buy_price($label) { return $this->api_query("marketorders", array("marketid" => $this->get_marketid($label)))["buyorders"][0]["buyprice"]; }
-	public function get_sell_price($label) { return $this->api_query("marketorders", array("marketid" => $this->get_marketid($label)))["sellorders"][0]["sellprice"]; }
+	public function get_buy_price($label) { return $this->get_price("buy",$label); }
+	public function get_sell_price($label) { return $this->get_price("sell",$label); }
+	//public function get_buy_price($label) { return $this->api_query("marketorders", array("marketid" => $this->get_marketid($label)))["buyorders"][0]["buyprice"]; }
+	//public function get_sell_price($label) { return $this->api_query("marketorders", array("marketid" => $this->get_marketid($label)))["sellorders"][0]["sellprice"]; }
+	public function get_price($type,$label)
+	{
+		$id = $this->get_marketid($label);
+		if( $id == 0)
+		{
+			print("No such currency lable - ".$label."\n");
+			return "";
+		}
+		// TODO: should check $type as well
+
+		do
+		{
+			sleep(1);
+			$price_data = $this->api_query("marketorders", array("marketid" => $id));
+			if(sizeof( $price_data) == 0)
+				continue;
+			if(sizeof($price_data[$type."orders"]) == 0)
+			{
+				print(".");
+				continue;
+			}
+		} while(0);
+
+		return $price_data[$type."orders"][0][$type."price"];
+	}
 	public function cal_order_fee($act, $label, $price, $quantity) {return 0;}
 	public function create_buy_order($label, $price, $quantity) { return $this->api_query("createorder", array("marketid" => $this->get_marketid($label) , "ordertype" => "Buy" , "price" => $price, "quantity" => $quantity)); }
 	public function create_sell_order($label, $price, $quantity) { return $this->api_query("createorder", array("marketid" => $this->get_marketid($label) , "ordertype" => "Sell" , "price" => $price, "quantity" => $quantity)); }
