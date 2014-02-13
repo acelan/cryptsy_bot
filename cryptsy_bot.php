@@ -94,6 +94,7 @@ while( 1 )
 		do
 		{
 			$counter++;
+			sleep(1);
 			$my_orders = $cryptsy->get_orders("DOGE/BTC");
 			if( (sizeof($my_orders) != 2) && ( $counter <= 3))
 				continue;
