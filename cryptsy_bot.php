@@ -67,9 +67,17 @@ while( 1 )
 		wait_order_succeed($cryptsy,0);
 
 		if( $my_btc < $btc_min)	// sell some doge to earn more btc
-			$cryptsy->create_sell_order("DOGE/BTC", $cur_buy_price, floor($my_doge*pow($sell_proportion,$sell_count+1)));
-		if( $my_doge < $doge_min) // buy some
-			$cryptsy->create_buy_order("DOGE/BTC", $cur_sell_price, floor($my_btc/$cur_sell_price*pow($order_proportion,$buy_count+1)));
+		{
+			$quantity = floor($my_doge*pow($sell_proportion,$sell_count+1));
+			print("Sell ".$quantity." Doge at price ".$cur_buy_price." for ".$quantity*$cur_buy_price." BTC, we have bought too much\n");
+			$cryptsy->create_sell_order("DOGE/BTC", $cur_buy_price, $quantity);
+		}
+		else if( $my_doge < $doge_min) // buy some
+		{
+			$quantity = floor($my_btc/$cur_sell_price*pow($order_proportion,$buy_count+1));
+			print("Buy ".$quantity." Doge at price ".$cur_sell_price." for ".$quantity*$cur_sell_price." BTC, we have sold too much\n");
+			$cryptsy->create_buy_order("DOGE/BTC", $cur_sell_price, $quantity);
+		}
 
 		if( $buy_count >= 3) // big drop now, sleep 1 hour
 			sleep(60);
