@@ -82,9 +82,10 @@ while( 1 )
 		}
 		else if( $my_doge < $doge_min) // buy some
 		{
-			$quantity = floor($my_btc/$cur_sell_price*pow($order_proportion,$buy_count+1));
+			$quantity = floor($my_btc/$cur_sell_price*$order_proportion);
 			print("Buy ".$quantity." Doge at price ".$cur_sell_price." for ".$quantity*$cur_sell_price." BTC, we have sold too much\n");
 			$cryptsy->create_buy_order("DOGE/BTC", $cur_sell_price, $quantity);
+			//TODO: need to check if the order success or not, or we'll buy more than 1 time
 		}
 
 		if( $buy_count >= 3) // big drop now, sleep 1 hour
@@ -141,6 +142,10 @@ function show_success_trade($my_orders, $old_orders)
 {
 	static $prev_price = 0;
 	$price = 0;
+
+	if( !is_array($old_orders) || !is_array($my_orders))
+		return;
+
 	if($my_orders[0]["ordertype"] == "Buy")
 	{
 		foreach($old_orders as $order)
@@ -182,6 +187,11 @@ function wait_order_succeed($cryptsy,$num_of_order)
 		if( (sizeof($my_orders) == $num_of_order))
 			break;
 		print(".");	// print one dot to notify user we are re-trying
+		if($counter > 100)	// re-try over 5mins
+		{
+			print("Warning, can't retrieve correct order data from server over 5 mins.\n");
+			break;
+		}
 	}
 	print("\n");
 
