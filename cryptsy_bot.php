@@ -88,7 +88,7 @@ while( 1 )
 		}
 
 		if( $buy_count >= 3) // big drop now, sleep 1 hour
-			sleep(60);
+			sleep(360);
 
 		continue;
 	}
