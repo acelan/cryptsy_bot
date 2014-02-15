@@ -71,6 +71,9 @@ while( 1 )
 
 		if( $my_btc < $btc_min)	// sell some doge to earn more btc
 		{
+			if($sell_count >=2) // the price is going up
+				continue;
+
 			// don't buy if the price is dropping
 			// we have bought more than 2 times, it's reasonable we don't have sufficient btc
 			if($buy_count <= 2)
@@ -83,6 +86,9 @@ while( 1 )
 		else if( $my_doge < $doge_min) // buy some
 		{
 			$quantity = floor($my_btc/$cur_sell_price*$order_proportion);
+			if($sell_count >= 2)	// the price is strongly going up, then buy more
+				$quantity = floor($my_btc/$cur_sell_price*0.95);
+
 			print("Buy ".$quantity." Doge at price ".$cur_sell_price." for ".$quantity*$cur_sell_price." BTC, we have sold too much\n");
 			$cryptsy->create_buy_order("DOGE/BTC", $cur_sell_price, $quantity);
 			//TODO: need to check if the order success or not, or we'll buy more than 1 time
