@@ -71,9 +71,14 @@ while( 1 )
 
 		if( $my_btc < $btc_min)	// sell some doge to earn more btc
 		{
-			$quantity = floor($my_doge*pow($sell_proportion,$sell_count+1));
-			print("Sell ".$quantity." Doge at price ".$cur_buy_price." for ".$quantity*$cur_buy_price." BTC, we have bought too much\n");
-			$cryptsy->create_sell_order("DOGE/BTC", $cur_buy_price, $quantity);
+			// don't buy if the price is dropping
+			// we have bought more than 2 times, it's reasonable we don't have sufficient btc
+			if($buy_count <= 2)
+			{
+				$quantity = floor($my_doge*pow($sell_proportion,$sell_count+1));
+				print("Sell ".$quantity." Doge at price ".$cur_buy_price." for ".$quantity*$cur_buy_price." BTC, we have bought too much\n");
+				$cryptsy->create_sell_order("DOGE/BTC", $cur_buy_price, $quantity);
+			}
 		}
 		else if( $my_doge < $doge_min) // buy some
 		{
