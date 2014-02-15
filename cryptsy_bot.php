@@ -41,8 +41,11 @@ while( 1 )
 		}
 		if( $my_doge > 0)
 		{
-			//$cryptsy->create_sell_order("DOGE/BTC", $cur_buy_price*pow($profit_percent,$sell_count+1), floor($my_doge*$sell_proportion));
-			$cryptsy->create_sell_order("DOGE/BTC", $cur_buy_price*$profit_percent, floor($my_doge*$sell_proportion));
+			// we don't want to sell too much if we just bought many times
+			$quantity = floor($my_doge*$sell_proportion);
+			if($buy_count >= 2)
+				$quantity = floor($my_doge*pow($sell_proportion,$buy_count));
+			$cryptsy->create_sell_order("DOGE/BTC", $cur_buy_price*$profit_percent, $quantity);
 			$place_order = 1;
 		}
 		$my_orders = wait_order_succeed($cryptsy,2);
