@@ -1,6 +1,5 @@
 <?php
 include "cryptsy_lib.php";
-include "config.php";
 
 $profit_percent = 1.02;
 $stop_lost_percent = 0.98;
@@ -8,6 +7,8 @@ $order_proportion = 0.7;
 $sell_proportion = 0.7;
 $btc_min = 0.01;
 $doge_min = 10000;
+
+include "config.php";
 
 $cryptsy = new Cryptsy( $key, $secret);
 
