@@ -1,6 +1,6 @@
 <?php
-$key = ''; // your API-key
-$secret = ''; // your Secret-key
+$key = ''; // your API public key
+$secret = ''; // your API private key
 
 $profit_percent = 1.02;		// sell price
 $stop_lost_percent = 0.98;	// buy price

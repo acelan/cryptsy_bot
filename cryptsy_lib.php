@@ -74,7 +74,7 @@ class Cryptsy
 		$id = $this->get_marketid($label);
 		if( $id == 0)
 		{
-			print("No such currency lable - ".$label."\n");
+			print("No such currency label - ".$label."\n");
 			return "";
 		}
 		// TODO: should check $type as well
