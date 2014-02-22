@@ -67,8 +67,6 @@ class Cryptsy
 	public function get_depth($label) { return $this->api_query("depth", array("marketid" => $this->get_marketid($label))); }
 	public function get_buy_price($label) { return $this->get_price("buy",$label); }
 	public function get_sell_price($label) { return $this->get_price("sell",$label); }
-	//public function get_buy_price($label) { return $this->api_query("marketorders", array("marketid" => $this->get_marketid($label)))["buyorders"][0]["buyprice"]; }
-	//public function get_sell_price($label) { return $this->api_query("marketorders", array("marketid" => $this->get_marketid($label)))["sellorders"][0]["sellprice"]; }
 	public function get_price($type,$label)
 	{
 		$id = $this->get_marketid($label);
@@ -133,12 +131,8 @@ class Cryptsy
 	 */
 	public function cancel_market_orders($label) { return $this->api_query("cancelmarketorders", array("marketid" => $this->get_marketid($label))); }
 	public function cancel_all_orders() { return $this->api_query("cancelallorders"); }
+	public function get_mytrades($label) { return $this->api_query("mytrades", array("marketid" => $this->get_marketid($label),"limit" => 10)); }
 
-//$result = api_query("createorder", array("marketid" => 26, "ordertype" => "Sell", "quantity" => 1000, "price" => 0.00031000));
-
-//$result = api_query("cancelorder", array("orderid" => 139567));
- 
-//$result = api_query("calculatefees", array("ordertype" => 'Buy', 'quantity' => 1000, 'price' => '0.005'));
 // protected
 	protected function api_query($method, array $req = array())
 	{
@@ -176,30 +170,44 @@ class Cryptsy
 		// run the query
 		$res = curl_exec($ch);
 		
-		if ($res === false)
+		// re-try 10 times if failed
+		if(($res === false) && ($this->query_count < 10))
 		{
 			return $this->api_query($method,$req);
 		}
 		$dec = json_decode($res, true);
-		if (!$dec)
+		if(!$dec && ($this->query_count <10))
 		{
-			//print_r($res);
-			//print($method." - Invalid data received!!! Re-submit request(".$this->query_count.")\n");
 			return $this->api_query($method,$req);
+		}
+
+		$this->log = $dec;
+
+		// TODO: sometimes it complains no 'return' when 'success' == 1
+		$ret = $dec;
+		if($dec["success"] == "1")
+		{
+			if(array_key_exists("return",$dec))
+				$ret = $dec["return"];
+			else
+			{
+				// find out which method will lead to no 'return' key
+				print("no 'return' in array, method = ".$method."\n");
+				print_r($dec);
+			}
+		}
+		else
+		{
+			if($this->query_count < 10)
+				return $this->api_query($method,$req);
+
+			// re-try 10 times and then tell user what happened
+			print($dec["error"]);
+
 		}
 		$this->query_count = 0;
 
-		sleep(1);
-		if($method != "createorder")
-		{
-			if($dec["success"] == "1")
-				return $dec["return"];
-		}
-		else
-			return $dec;
-
-		$this->log = $dec;
-		return "";
+		return $ret;
 	}
 	protected function get_marketid($label)
 	{
@@ -218,5 +226,3 @@ class Cryptsy
 };
 
 ?>
-
-
