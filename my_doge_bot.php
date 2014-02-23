@@ -103,8 +103,13 @@ class my_doge_bot extends cryptsy_bot
 		{
 			if(sizeof($data["my_trade"]) != 0)
 			{
+				static $order_id = 0;
 				$my_trade = $data["my_trade"][0];
-				print($my_trade["tradetype"]." ".$my_trade["quantity"]." at price ".$my_trade["tradeprice"]." , total btc ".$my_trade["total"]."\n");
+				if($my_trade["order_id"] != $order_id) // make sure we've made a new trade
+				{
+					print($my_trade["tradetype"]." ".$my_trade["quantity"]." at price ".$my_trade["tradeprice"]." , total btc ".$my_trade["total"]."\n");
+					$order_id = $my_trade["order_id"];
+				}
 
 				if( $my_trade["tradetype"] == "Buy")
 				{
