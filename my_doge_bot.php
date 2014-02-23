@@ -165,12 +165,15 @@ class my_doge_bot extends cryptsy_bot
 		$my_orders = $this->data["my_orders"];
 
 
-		$myorder0 = 0;
-		if(sizeof($my_orders) >= 1)
-			$myorder0 = $my_orders[0];
-		$myorder1 = 0;
-		if(sizeof($my_orders) >= 2)
-			$myorder0 = $my_orders[1];
+		$myorder_btc = 0;
+		$myorder_doge = 0;
+		foreach($my_orders as $order)
+		{
+			if($order["ordertype"] == "Buy")
+				$myorder_btc = $order["total"];
+			if($order["ordertype"] == "Sell")
+				$myorder_doge = $order["quantity"];
+		}
 		if(sizeof($my_orders) == 0)
 		{
 			$dt = new DataTime();
@@ -180,7 +183,8 @@ class my_doge_bot extends cryptsy_bot
 		else
 			$datetime = $my_orders[0]["created"];
 
-		$total_btc = $my_btc + $my_doge*$cur_buy_price + $myorder0["quantity"]*$cur_buy_price + $myorder1["quantity"]*$cur_buy_price;
+		$total_btc = $my_btc + $myorder_btc + ($my_doge+$myorder_doge)*$cur_buy_price;
+		print("$total_btc = $my_btc + $myorder_btc + ($my_doge+$myorder_doge)*$cur_buy_price\n");
 		print("=================================================================================\n");
 		print($datetime." - total btc=".$total_btc." , cur_price=".$cur_buy_price.", my_btc=".$my_btc." , my_doge=".$my_doge." , b_c=".$this->buy_count." , s_c=".$this->sell_count."\n");
 		foreach($my_orders as $order)
