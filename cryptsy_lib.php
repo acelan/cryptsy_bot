@@ -192,8 +192,9 @@ class Cryptsy
 			else
 			{
 				// find out which method will lead to no 'return' key
-				print("no 'return' in array, method = ".$method."\n");
-				print_r($dec);
+				// createorder cancelmarketorders
+				//print("no 'return' in array, method = ".$method."\n");
+				//print_r($dec);
 			}
 		}
 		else
