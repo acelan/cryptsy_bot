@@ -104,14 +104,14 @@ class my_doge_bot extends cryptsy_bot
 			if(sizeof($data["my_trade"]) != 0)
 			{
 				$my_trade = $data["my_trade"][0];
-				print($my_trade["ordertype"]." ".$my_trade["quantity"]." at price ".$my_trade["price"]." , total btc ".$my_trade["total"]."\n");
+				print($my_trade["tradetype"]." ".$my_trade["quantity"]." at price ".$my_trade["tradeprice"]." , total btc ".$my_trade["total"]."\n");
 
-				if( $my_trade["ordertype"] == "Buy")
+				if( $my_trade["tradetype"] == "Buy")
 				{
 					$this->buy_count++;
 					$this->sell_count = 0;
 				}
-				else if( $my_trade["ordertype"] == "Sell")
+				else if( $my_trade["tradetype"] == "Sell")
 				{
 					$this->sell_count++;
 					$this->buy_count = 0;
@@ -120,7 +120,7 @@ class my_doge_bot extends cryptsy_bot
 
 			$this->cancel_market_orders();
 
-			if( $buy_count >= 3) // big drop now, sleep 1 hour
+			if( $this->buy_count >= 3) // big drop now, sleep 1 hour
 				sleep(360);
 
 			return;

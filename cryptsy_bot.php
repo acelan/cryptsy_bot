@@ -29,7 +29,7 @@ abstract class cryptsy_bot
 	protected function set_key($key,$secret,$label) {$this->key=$key; $this->secret=$secret; $this->label=$label;}
 	protected function create_buy_order($price, $quantity) {$this->cryptsy->create_buy_order($this->label,$price,$quantity);}
 	protected function create_sell_order($price, $quantity) {$this->cryptsy->create_sell_order($this->label,$price,$quantity);}
-	protected function cancel_market_orders() {$this->cryptsy->cancel_market_orders($label);}
+	protected function cancel_market_orders() {$this->cryptsy->cancel_market_orders($this->label);}
 	/*
 	 * [cur_buy_price] => 0.00000209
 	 * [cur_sell_price] => 0.00000210
