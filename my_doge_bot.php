@@ -148,10 +148,8 @@ class my_doge_bot extends cryptsy_bot
 			$this->create_buy_order($cur_sell_price*pow($this->stop_lost_percent,$this->buy_count+1), floor($my_btc/$cur_sell_price*$this->order_proportion));
 		if( $my_doge > 0)
 		{
-			// we don't want to sell too much if we just bought many times
-			$quantity = floor($my_doge*$this->sell_proportion);
-			if($this->buy_count >= 2)
-				$quantity = floor($my_doge*pow($this->sell_proportion,$this->buy_count));
+			// we don't want to sell too much if we just bought more than 1 time
+			$quantity = floor($my_doge*pow($this->sell_proportion,$this->buy_count+1));
 			$this->create_sell_order($cur_buy_price*$this->profit_percent, $quantity);
 		}
 	}
