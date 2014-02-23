@@ -182,7 +182,6 @@ class my_doge_bot extends cryptsy_bot
 			$datetime = $my_orders[0]["created"];
 
 		$total_btc = $my_btc + $myorder_btc + ($my_doge+$myorder_doge)*$cur_buy_price;
-		print("$total_btc = $my_btc + $myorder_btc + ($my_doge+$myorder_doge)*$cur_buy_price\n");
 		print("=================================================================================\n");
 		print($datetime." - total btc=".$total_btc." , cur_price=".$cur_buy_price.", my_btc=".$my_btc." , my_doge=".$my_doge." , b_c=".$this->buy_count." , s_c=".$this->sell_count."\n");
 		foreach($my_orders as $order)
