@@ -144,7 +144,11 @@ class my_doge_bot extends cryptsy_bot
 			$this->cancel_market_orders();
 			return;
 		}
-		print("current price: $cur_buy_price\r");
+
+		$dt = new DateTime();
+		$dt->setTimezone(new DateTimeZone('EST'));
+		$datetime = $dt->format('Y\-m\-d\ h:i:s');
+		print("$datetime - current price: $cur_buy_price\r");
 	}
 	protected function place_order()
 	{
