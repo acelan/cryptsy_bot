@@ -14,8 +14,16 @@ class my_doge_bot extends cryptsy_bot
 		$this->order_proportion = isset($config['order_proportion']) ? $config['order_proportion'] : 0.7;
 		$this->sell_proportion = isset($config['sell_proportion']) ? $config['sell_proportion'] : 0.7;
 
-		$this->buy_count = 0;
-		$this->sell_count = 0;
+		if (isset($config['init_buy_count'])) {
+			$this->buy_count = $config['init_buy_count'];
+			$this->sell_count = 0;
+		} else if (isset($config['init_sell_count'])) {
+			$this->buy_count = 0;
+			$this->sell_count = $config['init_sell_count'];
+		} else {
+			$this->buy_count = 0;
+			$this->sell_count = 0;
+		}
 
 		// It's a bot to sell/buy DOGE and BTC only
 		$this->set_key($config['public_key'] , $config['private_key'], "DOGE/BTC");

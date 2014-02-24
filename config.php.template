@@ -7,5 +7,9 @@ $config = array(
 	'stop_lost_percent'	=> 0.98,	// buy price
 	'order_proportion'	=> 0.7,
 	'sell_proportion'	=> 0.7,
+
+	// import previous status, only one of these variable can be set
+	'init_buy_count'	=> 2,
+	'init_sell_count'	=> 1,
 );
 ?>
