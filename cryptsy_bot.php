@@ -42,7 +42,7 @@ abstract class cryptsy_bot
 	protected function cancel_market_orders()
 	{
 		$this->cryptsy->cancel_market_orders($this->label);
-		$this->order_count = $this->wait_order_succeed($this->order_count+1);
+		$this->order_count = $this->wait_order_succeed(0);
 	}
 	/*
 	 * [cur_buy_price] => 0.00000209
