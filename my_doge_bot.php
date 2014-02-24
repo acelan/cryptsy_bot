@@ -144,6 +144,7 @@ class my_doge_bot extends cryptsy_bot
 			$this->cancel_market_orders();
 			return;
 		}
+		print("current price: $cur_buy_price\r");
 	}
 	protected function place_order()
 	{
