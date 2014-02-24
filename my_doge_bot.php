@@ -185,7 +185,7 @@ class my_doge_bot extends cryptsy_bot
 		{
 			$dt = new DateTime();
 			$dt->setTimezone(new DateTimeZone('EST'));
-			$datetime = $dt->format('Y-\m\-d\ h:i:s');
+			$datetime = $dt->format('Y\-m\-d\ h:i:s');
 		}
 		else
 			$datetime = $my_orders[0]["created"];
