@@ -1,12 +1,15 @@
 <?php
-$key = ''; // your API public key
-$secret = ''; // your API private key
+$config = array(
+	'public_key'	=> 'your API public key',
+	'private_key'	=> 'your API private_key',
 
-$profit_percent = 1.02;		// sell price
-$stop_lost_percent = 0.98;	// buy price
-$order_proportion = 0.7;
-$sell_proportion = 0.7;
-				// set btc_min = total_btc/2*0.7*0.7, and doge_min same value as btc_min
-$btc_min = 0.01;		// will sell some doge immediately if btc coin less than btc_min
-$doge_min = 10000;		// will buy some doge immediately if doge coin less than doge_min
+	'profit_percent'	=> 1.02,	// sell price
+	'stop_lost_percent'	=> 0.98,	// buy price
+	'order_proportion'	=> 0.7,
+	'sell_proportion'	=> 0.7,
+
+	// import previous status, only one of these variable can be set
+	'init_buy_count'	=> 2,
+	'init_sell_count'	=> 1,
+);
 ?>

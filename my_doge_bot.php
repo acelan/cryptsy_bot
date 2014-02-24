@@ -6,19 +6,27 @@ include "config.php";
 
 class my_doge_bot extends cryptsy_bot
 {
-	public function my_doge_bot($key,$secret)
+	public function my_doge_bot($config)
 	{
 
-		$this->profit_percent = isset($profit_percent)?$profit_percent:1.02;
-		$this->stop_lost_percent = isset($stop_lost_percent)?$stop_lost_percent:0.98;
-		$this->order_proportion = isset($order_proportion)?$order_proportion:0.7;
-		$this->sell_proportion = isset($sell_proportion)?$sell_proportion:0.7;
+		$this->profit_percent = isset($config['profit_percent']) ? $config['profit_percent'] : 1.02;
+		$this->stop_lost_percent = isset($config['stop_lost_percent']) ? $config['stop_lost_percent'] : 0.98;
+		$this->order_proportion = isset($config['order_proportion']) ? $config['order_proportion'] : 0.7;
+		$this->sell_proportion = isset($config['sell_proportion']) ? $config['sell_proportion'] : 0.7;
 
-		$this->buy_count = 0;
-		$this->sell_count = 0;
+		if (isset($config['init_buy_count'])) {
+			$this->buy_count = $config['init_buy_count'];
+			$this->sell_count = 0;
+		} else if (isset($config['init_sell_count'])) {
+			$this->buy_count = 0;
+			$this->sell_count = $config['init_sell_count'];
+		} else {
+			$this->buy_count = 0;
+			$this->sell_count = 0;
+		}
 
 		// It's a bot to sell/buy DOGE and BTC only
-		$this->set_key($key , $secret, "DOGE/BTC");
+		$this->set_key($config['public_key'] , $config['private_key'], "DOGE/BTC");
 	}
 
 	/*
@@ -197,7 +205,7 @@ class my_doge_bot extends cryptsy_bot
 	private $data;
 }
 
-$my_bot = new my_doge_bot($key,$secret);
+$my_bot = new my_doge_bot($config);
 $my_bot->run();
 
 ?>
