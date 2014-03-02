@@ -11,5 +11,8 @@ $config = array(
 	// import previous status, only one of these variable can be set
 	'init_buy_count'	=> 2,
 	'init_sell_count'	=> 1,
+
+	// log file name, set to null string to stop loggin
+	'log_filename'		=> 'bot.log',
 );
 ?>

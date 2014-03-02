@@ -25,6 +25,10 @@ class my_doge_bot extends cryptsy_bot
 			$this->sell_count = 0;
 		}
 
+		$this->log_filename = '';
+		if (isset($config['log_filename']))
+			$this->log_filename = $config['log_filename'];
+
 		// It's a bot to sell/buy DOGE and BTC only
 		$this->set_key($config['public_key'] , $config['private_key'], "DOGE/BTC");
 	}
@@ -199,6 +203,15 @@ class my_doge_bot extends cryptsy_bot
 		print($datetime." - total btc=".$total_btc." , cur_price=".$cur_buy_price.", my_btc=".$my_btc." , my_doge=".$my_doge." , b_c=".$this->buy_count." , s_c=".$this->sell_count."\n");
 		foreach($my_orders as $order)
 			print("   my orders - ".$order["ordertype"]." ".$order["quantity"]." at price ".$order["price"]." , total btc ".$order["total"]."\n");
+
+		if($this->log_filename != "")
+		{
+			$file = $this->log_filename;
+			$res = file_put_contents($file, "=================================================================================\n", FILE_APPEND);
+			file_put_contents($file,$datetime." - total btc=".$total_btc." , cur_price=".$cur_buy_price.", my_btc=".$my_btc." , my_doge=".$my_doge." , b_c=".$this->buy_count." , s_c=".$this->sell_count."\n", FILE_APPEND);
+			foreach($my_orders as $order)
+				file_put_contents($file, "   my orders - ".$order["ordertype"]." ".$order["quantity"]." at price ".$order["price"]." , total btc ".$order["total"]."\n", FILE_APPEND);
+		}
 	}
 
 	private $profit_percent;
@@ -208,6 +221,7 @@ class my_doge_bot extends cryptsy_bot
 	private $buy_count;
 	private $sell_count;
 	private $data;
+	private $log_filename;
 }
 
 $my_bot = new my_doge_bot($config);
