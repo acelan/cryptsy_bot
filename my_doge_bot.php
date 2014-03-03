@@ -120,6 +120,11 @@ class my_doge_bot extends cryptsy_bot
 				if($my_trade["order_id"] != $order_id) // make sure we've made a new trade
 				{
 					print($my_trade["tradetype"]." ".$my_trade["quantity"]." at price ".$my_trade["tradeprice"]." , total btc ".$my_trade["total"]."\n");
+
+					$file = $this->log_filename;
+					if($file != "")
+						file_put_contents($file, $my_trade["tradetype"]." ".$my_trade["quantity"]." at price ".$my_trade["tradeprice"]." , total btc ".$my_trade["total"]."\n", FILE_APPEND);
+
 					$order_id = $my_trade["order_id"];
 				}
 
@@ -207,7 +212,7 @@ class my_doge_bot extends cryptsy_bot
 		if($this->log_filename != "")
 		{
 			$file = $this->log_filename;
-			$res = file_put_contents($file, "=================================================================================\n", FILE_APPEND);
+			file_put_contents($file, "=================================================================================\n", FILE_APPEND);
 			file_put_contents($file,$datetime." - total btc=".$total_btc." , cur_price=".$cur_buy_price.", my_btc=".$my_btc." , my_doge=".$my_doge." , b_c=".$this->buy_count." , s_c=".$this->sell_count."\n", FILE_APPEND);
 			foreach($my_orders as $order)
 				file_put_contents($file, "   my orders - ".$order["ordertype"]." ".$order["quantity"]." at price ".$order["price"]." , total btc ".$order["total"]."\n", FILE_APPEND);
