@@ -132,6 +132,64 @@ class Cryptsy
 	public function cancel_market_orders($label) { return $this->api_query("cancelmarketorders", array("marketid" => $this->get_marketid($label))); }
 	public function cancel_all_orders() { return $this->api_query("cancelallorders"); }
 	public function get_mytrades($label) { return $this->api_query("mytrades", array("marketid" => $this->get_marketid($label),"limit" => 10)); }
+	/*
+	 * Array
+	 *   (
+	 *       [markets] => Array
+	 *           (
+	 *
+	 * 		[ALF/BTC] => Array
+	 * 		              (
+	 * 		                  [marketid] => 57
+	 * 		                  [label] => ALF/BTC
+	 * 		                  [lasttradeprice] => 0.00000188
+	 * 		                  [volume] => 302606.55553025
+	 * 		                  [lasttradetime] => 2014-03-17 02:42:51
+	 * 		                  [primaryname] => AlphaCoin
+	 * 		                  [primarycode] => ALF
+	 * 		                  [secondaryname] => BitCoin
+	 * 		                  [secondarycode] => BTC
+	 * 		                  [recenttrades] => Array
+	 * 		                      (
+	 * 		                          [0] => Array
+	 * 		                              (
+	 * 		                                  [id] => 30975581
+	 * 		                                  [time] => 2014-03-17 02:42:51
+	 * 		                                  [price] => 0.00000188
+	 * 		                                  [quantity] => 72.64195657
+	 * 		                                  [total] => 0.00013657
+	 * 		                              )
+	 *
+	 * 		                          [1] => Array
+	 * 		                              (
+	 * 		                                  [id] => 30975508
+	 * 		                                  [time] => 2014-03-17 02:42:04
+	 * 		                                  [price] => 0.00000188
+	 * 		                                  [quantity] => 106.30371910
+	 * 		                                  [total] => 0.00019985
+	 * 		                              )
+	 */
+	public function get_marketdata()
+	{
+		static $ch2 = null;
+		if (is_null($ch2)) {
+			$ch2 = curl_init();
+			curl_setopt($ch2, CURLOPT_RETURNTRANSFER, true);
+			curl_setopt($ch2, CURLOPT_USERAGENT, 'Mozilla/4.0 (compatible; Cryptsy API PHP client; '.php_uname('s').'; PHP/'.phpversion().')');
+		}
+		curl_setopt($ch2, CURLOPT_RETURNTRANSFER, true);
+		curl_setopt($ch2, CURLOPT_SSL_VERIFYPEER, false);
+		curl_setopt($ch2, CURLOPT_URL, 'http://pubapi.cryptsy.com/api.php?method=marketdatav2');
+		curl_setopt($ch2, CURLOPT_SSL_VERIFYPEER, FALSE);
+
+		// run the query
+		$res = curl_exec($ch2);
+		$dec = json_decode($res, true);
+		if($dec["success"] == "1")
+			if(array_key_exists("return",$dec))
+				return $dec["return"];
+		return "";
+	}
 
 // protected
 	protected function api_query($method, array $req = array())
