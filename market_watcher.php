@@ -36,9 +36,10 @@ while(1)
 			}
 		}
 		// we like waves
-		if(($b_c != 0) && ($s_c != 0))
-			print($market["label"]." - buy_count = ".$b_c." , sell_count = ".$s_c."\n");
+		if(($b_c >= 2) && ($s_c >= 2) && ($market["recenttrades"][0]["price"] > 0.00000010))
+			print($market["label"]." - buy_count = ".$b_c." , sell_count = ".$s_c." last price = ".$market["recenttrades"][0]["price"]."\n");
 	}
+	print("=================================================================================\n");
 	// get data once a minute
 	sleep(60);
 }
