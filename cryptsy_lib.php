@@ -6,6 +6,7 @@ class Cryptsy
 	{
 		$this->key = $key;
 		$this->secret = $secret;
+		$this->price_timestamp = 0;
 		$this->markets = $this->api_query("getmarkets");
 		if(sizeof($this->markets) == 0) { print_r($this->log); exit(0); }
 	}
@@ -77,20 +78,26 @@ class Cryptsy
 		}
 		// TODO: should check $type as well
 
-		do
+		// cache the data for 5 seconds
+		if((time()-$this->price_timestamp) > 5)
 		{
-			sleep(1);
-			$price_data = $this->api_query("marketorders", array("marketid" => $id));
-			if(sizeof( $price_data) == 0)
-				continue;
-			if(sizeof($price_data[$type."orders"]) == 0)
+			do
 			{
-				print(".");
-				continue;
-			}
-		} while(0);
+				sleep(1);
+				$price_data = $this->api_query("marketorders", array("marketid" => $id));
+				if(sizeof( $price_data) == 0)
+					continue;
+				if(sizeof($price_data[$type."orders"]) == 0)
+				{
+					print(".");
+					continue;
+				}
+			} while(0);
+			$this->price_timestamp = time();
+			$this->price_data = $price_data;
+		}
 
-		return $price_data[$type."orders"][0][$type."price"];
+		return $this->price_data[$type."orders"][0][$type."price"];
 	}
 	public function cal_order_fee($act, $label, $price, $quantity) {return 0;}
 	public function create_buy_order($label, $price, $quantity) { return $this->api_query("createorder", array("marketid" => $this->get_marketid($label) , "ordertype" => "Buy" , "price" => $price, "quantity" => $quantity)); }
@@ -282,6 +289,8 @@ class Cryptsy
 	private $markets;
 	private $log;
 	private $query_count;
+	private $price_timestamp;
+	private $price_data;
 };
 
 ?>
