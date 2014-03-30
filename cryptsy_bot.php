@@ -29,6 +29,7 @@ abstract class cryptsy_bot
 	protected abstract function init($data);
 	protected abstract function tick($data);
 	protected function set_key($key,$secret,$label) {$this->key=$key; $this->secret=$secret; $this->label=$label;}
+	protected function set_label($label) { $this->label = $label; }
 	protected function create_buy_order($price, $quantity)
 	{
 		$this->cryptsy->create_buy_order($this->label,$price,$quantity);
