@@ -70,6 +70,7 @@ class Cryptsy
 	public function get_sell_price($label) { return $this->get_price("sell",$label); }
 	public function get_price($type,$label)
 	{
+		static $prev_label = "";
 		$id = $this->get_marketid($label);
 		if( $id == 0)
 		{
@@ -79,7 +80,7 @@ class Cryptsy
 		// TODO: should check $type as well
 
 		// cache the data for 5 seconds
-		if((time()-$this->price_timestamp) > 5)
+		if(((time()-$this->price_timestamp) > 5) || ($prev_label != $label))
 		{
 			do
 			{
@@ -95,6 +96,7 @@ class Cryptsy
 			} while(0);
 			$this->price_timestamp = time();
 			$this->price_data = $price_data;
+			$prev_label = $label;
 		}
 
 		return $this->price_data[$type."orders"][0][$type."price"];
