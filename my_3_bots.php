@@ -126,8 +126,6 @@ class my_doge_bot extends cryptsy_bot
 			if( $this->pseudo_orders[$label][0]["price"] >= $sell_price)
 			{
 				$my_trade = $this->pseudo_orders[$label][0];
-				if( $label == "DOGE/BTC")
-					$my_trade["price"] = floor($my_trade["price"]);
 				// TODO: we should track the order status
 				$this->set_label($label);
 				$this->create_buy_order( $my_trade["price"], $my_trade["quantity"]);
@@ -151,8 +149,6 @@ class my_doge_bot extends cryptsy_bot
 			else if( $this->pseudo_orders[$label][1]["price"] <= $buy_price)
 			{
 				$my_trade = $this->pseudo_orders[$label][1];
-				if( $label == "DOGE/BTC")
-					$my_trade["price"] = floor($my_trade["price"]);
 				// TODO: we should track the order status
 				$this->set_label($label);
 				$this->create_sell_order( $my_trade["price"], $my_trade["quantity"]);
