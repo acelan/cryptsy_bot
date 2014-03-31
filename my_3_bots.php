@@ -68,8 +68,30 @@ class my_doge_bot extends cryptsy_bot
 		$my_doge = $data["my_wallet"]["DOGE"];
 		$my_ltc = $data["my_wallet"]["LTC"];
 
+		static $trade_tick = 0;
+		if(sizeof($data["my_trade"] != 0))
+		{
+			$trade_tick++;
+			if( $trade_tick >= 10)
+			{
+				// TODO: this is so stupid
+				$labels = array("LTC/BTC","DOGE/BTC","DOGE/LTC");
+				foreach($labels as $label)
+				{
+					$this->set_label($label);
+					$this->cancel_market_orders();
+				}
+				$trade_tick = 0;
+			}
+		}
+		else
+			$trade_tick = 0;
+
 		if( $this->place_order() == 1)
+		{
 			$this->show_status();
+			$trade_tick = 0;
+		}
 
 		$ltc_buy_price = $this->priv["LTC/BTC"]["data"]["cur_buy_price"];
 		$doge_buy_price = $this->priv["DOGE/BTC"]["data"]["cur_buy_price"];
@@ -104,6 +126,8 @@ class my_doge_bot extends cryptsy_bot
 			if( $this->pseudo_orders[$label][0]["price"] >= $sell_price)
 			{
 				$my_trade = $this->pseudo_orders[$label][0];
+				if( $label == "DOGE/BTC")
+					$my_trade["price"] = floor($my_trade["price"]);
 				// TODO: we should track the order status
 				$this->set_label($label);
 				$this->create_buy_order( $my_trade["price"], $my_trade["quantity"]);
@@ -127,6 +151,8 @@ class my_doge_bot extends cryptsy_bot
 			else if( $this->pseudo_orders[$label][1]["price"] <= $buy_price)
 			{
 				$my_trade = $this->pseudo_orders[$label][1];
+				if( $label == "DOGE/BTC")
+					$my_trade["price"] = floor($my_trade["price"]);
 				// TODO: we should track the order status
 				$this->set_label($label);
 				$this->create_sell_order( $my_trade["price"], $my_trade["quantity"]);
@@ -162,13 +188,19 @@ class my_doge_bot extends cryptsy_bot
 
 		$this->pseudo_orders[$label] = array();
 		$this->pseudo_orders[$label][0]["ordertype"] = "Buy";
-		$this->pseudo_orders[$label][0]["quantity"] = $my_money/$sell_price*$this->order_proportion;
+		if( $label == "DOGE/BTC")
+			$this->pseudo_orders[$label][0]["quantity"] = floor($my_money/$sell_price*$this->order_proportion);
+		else
+			$this->pseudo_orders[$label][0]["quantity"] = $my_money/$sell_price*$this->order_proportion;
 		$this->pseudo_orders[$label][0]["price"] = $sell_price*pow($this->stop_lost_percent,$this->priv[$label]["buy_count"]+1);
 		$this->pseudo_orders[$label][0]["total"] = $this->pseudo_orders[$label][0]["quantity"]*$this->pseudo_orders[$label][0]["price"];
 
 		$this->pseudo_orders[$label][1]["ordertype"] = "Sell";
 		// we don't want to sell too much if we just bought more than 1 time
-		$this->pseudo_orders[$label][1]["quantity"] = $my_coin*pow($this->sell_proportion,$this->priv[$label]["buy_count"]+1);
+		if( $label == "DOGE/BTC")
+			$this->pseudo_orders[$label][1]["quantity"] = floor($my_coin*pow($this->sell_proportion,$this->priv[$label]["buy_count"]+1));
+		else
+			$this->pseudo_orders[$label][1]["quantity"] = $my_coin*pow($this->sell_proportion,$this->priv[$label]["buy_count"]+1);
 		$this->pseudo_orders[$label][1]["price"] = $buy_price*$this->profit_percent;
 		$this->pseudo_orders[$label][1]["total"] = $this->pseudo_orders[$label][1]["quantity"]*$this->pseudo_orders[$label][1]["price"];
 	}
