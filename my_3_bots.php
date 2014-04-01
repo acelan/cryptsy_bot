@@ -69,7 +69,7 @@ class my_doge_bot extends cryptsy_bot
 		$my_ltc = $data["my_wallet"]["LTC"];
 
 		static $trade_tick = 0;
-		if(sizeof($data["my_trade"] != 0))
+		if(sizeof($data["my_trade"]) != 0)
 		{
 			$trade_tick++;
 			if( $trade_tick >= 10)
