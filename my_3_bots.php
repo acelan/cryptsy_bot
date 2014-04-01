@@ -30,20 +30,13 @@ class my_doge_bot extends cryptsy_bot
 		// initialize
 		// read history data
 		// train your parmaters
-		// "DOGE/BTC" , "LTC/BTC" , "DOGE/LTC"
-		$this->priv["DOGE/BTC"]["data"] = $data;
-
-		$this->set_label("LTC/BTC");
-		$this->priv["LTC/BTC"]["data"] = $this->update_data();
-
-		$this->set_label("DOGE/LTC");
-		$this->priv["DOGE/LTC"]["data"] = $this->update_data();
-
-		$this->set_label("DOGE/BTC");
-
 		$labels = array("LTC/BTC","DOGE/BTC","DOGE/LTC");
 		foreach($labels as $label)
+		{
+			$this->set_label($label);
+			$this->priv[$label]["data"] = $this->update_data();
 			$this->update_pseudo_order($label);
+		}
 
 		$this->show_status();
 	}
@@ -53,16 +46,12 @@ class my_doge_bot extends cryptsy_bot
 	 */
 	protected function tick($data)
 	{
-		// "DOGE/BTC" , "LTC/BTC" , "DOGE/LTC"
-		$this->priv["DOGE/BTC"]["data"] = $data;
-
-		$this->set_label("LTC/BTC");
-		$this->priv["LTC/BTC"]["data"] = $this->update_data();
-
-		$this->set_label("DOGE/LTC");
-		$this->priv["DOGE/LTC"]["data"] = $this->update_data();
-
-		$this->set_label("DOGE/BTC");
+		$labels = array("LTC/BTC","DOGE/BTC","DOGE/LTC");
+		foreach($labels as $label)
+		{
+			$this->set_label($label);
+			$this->priv[$label]["data"] = $this->update_data();
+		}
 
 		$my_btc = $data["my_wallet"]["BTC"];
 		$my_doge = $data["my_wallet"]["DOGE"];
@@ -173,12 +162,12 @@ class my_doge_bot extends cryptsy_bot
 	}
 	protected function update_pseudo_order($label)
 	{
-		$my_btc = $this->priv["DOGE/BTC"]["data"]["my_wallet"]["BTC"];
-		$my_ltc = $this->priv["DOGE/BTC"]["data"]["my_wallet"]["LTC"];
-		$my_doge = $this->priv["DOGE/BTC"]["data"]["my_wallet"]["DOGE"];
+		$my_btc = $this->priv[$label]["data"]["my_wallet"]["BTC"];
+		$my_ltc = $this->priv[$label]["data"]["my_wallet"]["LTC"];
+		$my_doge = $this->priv[$label]["data"]["my_wallet"]["DOGE"];
 
-		$my_money = $this->priv["DOGE/BTC"]["data"]["my_wallet"][explode("/",$label)[1]];
-		$my_coin = $this->priv["DOGE/BTC"]["data"]["my_wallet"][explode("/",$label)[0]];
+		$my_money = $this->priv[$label]["data"]["my_wallet"][explode("/",$label)[1]];
+		$my_coin = $this->priv[$label]["data"]["my_wallet"][explode("/",$label)[0]];
 		$buy_price = $this->priv[$label]["data"]["cur_buy_price"];
 		$sell_price = $this->priv[$label]["data"]["cur_sell_price"];
 
