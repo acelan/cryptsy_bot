@@ -167,7 +167,12 @@ class my_doge_bot extends cryptsy_bot
 		$cur_sell_price = $this->data["cur_sell_price"];
 
 		if( $my_btc > 0)
-			$this->create_buy_order($cur_sell_price*pow($this->stop_lost_percent,$this->buy_count+1), floor($my_btc/$cur_sell_price*$this->order_proportion));
+		{
+			$buy_price = $cur_sell_price*pow($this->stop_lost_percent,$this->buy_count+1);
+			if( $my_doge < 10000) // try to buy some coins in low profit rate
+				$buy_price = $cur_sell_price*0.99;
+			$this->create_buy_order($buy_price, floor($my_btc/$cur_sell_price*$this->order_proportion));
+		}
 		if( $my_doge > 0)
 		{
 			// we don't want to sell too much if we just bought more than 1 time
