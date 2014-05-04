@@ -12,6 +12,9 @@ abstract class cryptsy_bot
 			exit(0);
 		}
 
+		if(!isset($this->tick_timeout))
+			$this->tick_timeout = 3;
+
 		$this->cryptsy = new Cryptsy( $this->key, $this->secret);
 		// get data
 		$data = $this->update_data();
