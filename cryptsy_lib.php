@@ -232,7 +232,6 @@ class Cryptsy
 		curl_setopt($ch, CURLOPT_URL, 'https://api.cryptsy.com/api');
 		curl_setopt($ch, CURLOPT_POSTFIELDS, $post_data);
 		curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
 		
 		// run the query
 		$res = curl_exec($ch);
