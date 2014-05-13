@@ -14,6 +14,7 @@ while(1)
 		$count = 0;
 		$b_c = 0;
 		$s_c = 0;
+		$total_btc = 0;
 		$trades = array_reverse($market["recenttrades"]);
 		foreach( $trades as $trade)
 		{
@@ -34,10 +35,12 @@ while(1)
 				$s_c++;
 				$sell_price = $trade["price"];
 			}
+
+			$total_btc += $trade["price"]*$trade["quantity"];
 		}
 		// we like waves
-		if(($b_c >= 2) && ($s_c >= 2) && ($market["recenttrades"][0]["price"] > 0.00000010))
-			print($market["label"]." - buy_count = ".$b_c." , sell_count = ".$s_c." last price = ".$market["recenttrades"][0]["price"]."\n");
+		if((($b_c >= 2) && ($s_c >= 2) && ($market["recenttrades"][0]["price"] > 0.00000010)) || $total_btc > 10)
+			print($market["label"]." - buy_count = ".$b_c." , sell_count = ".$s_c." total btc = ".$total_btc."\n");
 	}
 	print("=================================================================================\n");
 	// get data once a minute
