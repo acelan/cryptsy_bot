@@ -136,14 +136,16 @@ class my_doge_bot extends cryptsy_bot
 				else if( $my_trade["tradetype"] == "Sell")
 				{
 					$this->sell_count++;
-					$this->buy_count = 0;
+
+					// don't set buy_count to 0 if we have bought more than 2 times
+					if( $this->buy_count > 1)
+						$this->buy_count -= 2;
+					else
+						$this->buy_count = 0;
 				}
 			}
 
 			$this->cancel_market_orders();
-
-			if( $this->buy_count >= 3) // big drop now, sleep 1 hour
-				sleep(360);
 
 			return;
 		}
