@@ -171,7 +171,7 @@ class my_drk_bot extends cryptsy_bot
 		if( $my_btc > 0)
 		{
 			$buy_price = $cur_sell_price*pow($this->stop_lost_percent,$this->buy_count+1);
-			if( $my_drk < 10000) // try to buy some coins in low profit rate
+			if( $my_drk < 1) // try to buy some coins in low profit rate
 				$buy_price = $cur_sell_price*0.99;
 			$this->create_buy_order($buy_price, $my_btc/$cur_sell_price*$this->order_proportion);
 		}
