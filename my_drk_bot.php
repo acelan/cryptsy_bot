@@ -110,7 +110,7 @@ class my_drk_bot extends cryptsy_bot
 
 	protected function done($data)
 	{
-		if(sizeof($my_orders) != 0)
+		if(sizeof($data["my_orders"]) != 0)
 			$this->show_status($data);
 	}
 
