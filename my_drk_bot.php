@@ -1,6 +1,6 @@
 <?php
 require_once "cryptsy_lib.php";
-require_once "cryptsy_bot2.php";
+require_once "cryptsy_bot.php";
 require_once "algo/acelan.php";
 
 include "config_drk.php";
