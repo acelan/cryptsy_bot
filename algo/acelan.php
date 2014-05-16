@@ -48,6 +48,7 @@ function my_algo($data,&$config)
 			}
 		}
 
+		$action = place_order($data,$config);
 		$action['cancel_market_orders'] = 1;
 		return $action;
 	}
