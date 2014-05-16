@@ -24,29 +24,57 @@ abstract class cryptsy_bot
 		{
 			sleep($this->tick_timeout);
 			// prepare $data
-			$this->tick($this->update_data());
+			$this->data = $this->update_data();
+			$action = $this->tick($this->data);
+
+			if( isset($action['cancel_order']))
+				$this->cancel_order($action['cancel_order']);
+			if( isset($action['cancel_market_orders']))
+				$this->cancel_market_orders();
+			if( isset($action['create_buy_order']))
+			{
+				foreach($action['create_buy_order'] as $order)
+					$this->create_buy_order($order['price'],$order['quantity']);
+			}
+			if( isset($action['create_sell_order']))
+			{
+				foreach($action['create_sell_order'] as $order)
+					$this->create_sell_order($order['price'],$order['quantity']);
+			}
+
+			if(sizeof($action) != 0)
+			{
+				$this->data = $this->update_data();
+				$this->done($this->data);
+			}
 		}
 	}
 
 // protected section
 	protected abstract function init($data);
 	protected abstract function tick($data);
+	protected abstract function done($data);
 	protected function set_key($key,$secret,$label) {$this->key=$key; $this->secret=$secret; $this->label=$label;}
 	protected function set_label($label) { $this->label = $label; }
-	protected function create_buy_order($price, $quantity)
+	private function create_buy_order($price, $quantity)
 	{
 		$this->cryptsy->create_buy_order($this->label,$price,$quantity);
 		$this->order_count = $this->wait_order_succeed($this->order_count+1);
 	}
-	protected function create_sell_order($price, $quantity)
+	private function create_sell_order($price, $quantity)
 	{
 		$this->cryptsy->create_sell_order($this->label,$price,$quantity);
 		$this->order_count = $this->wait_order_succeed($this->order_count+1);
 	}
-	protected function cancel_market_orders()
+	private function cancel_market_orders()
 	{
 		$this->cryptsy->cancel_market_orders($this->label);
 		$this->order_count = $this->wait_order_succeed(0);
+	}
+	private function cancel_order($order_id)
+	{
+		$this->cryptsy->cancel_order($order_id);
+		$this->order_count = $this->wait_order_succeed(sizeof($this->data['my_orders'])-1);
 	}
 	/*
 	 * [cur_buy_price] => 0.00000209
@@ -143,6 +171,7 @@ abstract class cryptsy_bot
 	private $key;
 	private $secret;
 	private $label;
+	private $data;
 	private $order_count;
 }
 ?>
