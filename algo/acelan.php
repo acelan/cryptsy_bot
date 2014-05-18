@@ -42,7 +42,7 @@ function my_algo($data,&$config)
 
 				// don't set buy_count to 0 if we have bought more than 2 times
 				if( $config['buy_count'] > 1)
-					$config['buy_count'] -= 2;
+					$config['buy_count'] -= 1;
 				else
 					$config['buy_count'] = 0;
 			}
