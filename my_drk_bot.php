@@ -16,15 +16,12 @@ class my_drk_bot extends cryptsy_bot
 		$this->config['sell_proportion'] = isset($config['sell_proportion']) ? $config['sell_proportion'] : 0.7;
 		$this->config['round'] = isset($config['round']) ? $config['round'] : 0;
 
+		$this->config['buy_count'] = 0;
+		$this->config['sell_count'] = 0;
 		if (isset($config['init_buy_count'])) {
 			$this->config['buy_count'] = $config['init_buy_count'];
-			$this->config['sell_count'] = 0;
 		} else if (isset($config['init_sell_count'])) {
-			$this->config['buy_count'] = 0;
 			$this->config['sell_count'] = $config['init_sell_count'];
-		} else {
-			$this->config['buy_count'] = 0;
-			$this->config['sell_count'] = 0;
 		}
 
 		$this->config['log_filename'] = '';
