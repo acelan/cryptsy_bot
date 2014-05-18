@@ -148,9 +148,9 @@ class my_drk_bot extends cryptsy_bot
 		foreach($my_orders as $order)
 			print("   my orders - ".$order["ordertype"]." ".$order["quantity"]." at price ".$order["price"]." , total btc ".$order["total"]."\n");
 
-		if($this->log_filename != "")
+		if($this->config["log_filename"] != "")
 		{
-			$file = $this->log_filename;
+			$file = $this->config["log_filename"];
 			file_put_contents($file, "=================================================================================\n", FILE_APPEND);
 			file_put_contents($file,$datetime." - total btc=".$total_btc." , cur_price=".$cur_buy_price.", my_btc=".$my_btc." , my_drk=".$my_drk." , b_c=".$this->config['buy_count']." , s_c=".$this->config['sell_count']."\n", FILE_APPEND);
 			foreach($my_orders as $order)
