@@ -1,4 +1,19 @@
 <?php
+/*
+ * my_init() is to initilize variable you will need to use in the algorithm - optional
+ * my_algo() is the main trading algorithm
+ * my_done() will be call when all actions are all done - optional
+ */
+
+function my_init($data,&$config)
+{
+	$config['min_target_coin'] = 2;
+}
+
+function my_done($data,&$config)
+{
+}
+
 function my_algo($data,&$config)
 {
 	$cur_buy_price = $data["cur_buy_price"];

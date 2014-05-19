@@ -20,7 +20,8 @@ class my_drk_bot extends cryptsy_bot
 		$this->config['sell_count'] = 0;
 		if (isset($config['init_buy_count'])) {
 			$this->config['buy_count'] = $config['init_buy_count'];
-		} else if (isset($config['init_sell_count'])) {
+		}
+		if (isset($config['init_sell_count'])) {
 			$this->config['sell_count'] = $config['init_sell_count'];
 		}
 
@@ -30,7 +31,6 @@ class my_drk_bot extends cryptsy_bot
 
 		$this->config['base_coin'] = 'BTC';
 		$this->config['target_coin'] = 'DRK';
-		$this->config['min_target_coin'] = 2;
 
 		// It's a bot to sell/buy DRK and BTC only
 		$this->set_key($config['public_key'] , $config['private_key'], "DRK/BTC");
@@ -89,6 +89,9 @@ class my_drk_bot extends cryptsy_bot
 	protected function init($data)
 	{
 		// initialize
+		if(function_exists("my_init"))
+			my_init($data,$this->config);
+
 		// read history data
 		// train your parmaters
 		$this->show_status($data);
@@ -109,6 +112,9 @@ class my_drk_bot extends cryptsy_bot
 	{
 		if(sizeof($data["my_orders"]) != 0)
 			$this->show_status($data);
+
+		if(function_exists("my_done"))
+			my_done($data,$this->config);
 	}
 
 	protected function show_status($data)
