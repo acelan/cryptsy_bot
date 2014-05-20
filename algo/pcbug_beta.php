@@ -74,15 +74,24 @@ function place_order($data,&$config)
 	printf("my_".$config['base_coin'].":%s my_".$config['target_coin'].":%s cur_b_p:%s cur_s_p:%s\n", $my_base_coin, $my_target_coin, $cur_buy_price, $cur_sell_price);
 	if( $my_base_coin > 0)
 	{
-  		$buy_percent= min( pow(2,$config['buy_count'])*$config['order_proportion'] , 0.9);
+  		$buy_percent= pow(2,$config['buy_count'])*$config['order_proportion'];
+  		//延長剩餘幣的可用壽命
+  		if($buy_percent > 0.8) {$buy_percent=0.5;}
+  		
+  		$quantity = $my_base_coin/$cur_buy_price*$buy_percent;
   		$buy_price=round($cur_buy_price*pow($config['stop_lost_percent'],$config['buy_count']+1)-0.000000005,8);
+  		
 		$action['create_buy_order'][0]['price'] = $buy_price;
-		$action['create_buy_order'][0]['quantity'] = $my_base_coin/$cur_sell_price*$buy_percent;
+		$action['create_buy_order'][0]['quantity'] = $quantity;
 	}
   	if( $my_target_coin > 0)
   	{
-  		$sell_percent= min( pow(2,$config['sell_count'])*$config['sell_proportion'] , 0.9);
-  		$quantity = $my_target_coin*$sell_percent;
+  		$sell_percent= pow(2,$config['sell_count'])*$config['sell_proportion'];
+
+		//賣出數量以base coin數量為基準
+  		$quantity = $my_base_coin/$cur_sell_price*$sell_percent;
+  		if($quantity > $my_target_coin*0.8) { $quantity = $my_target_coin*0.5;}
+  		
   		$sell_price=round($cur_sell_price*pow($config['profit_percent'],$config['sell_count']+1)+0.000000004,8);
 		$action['create_sell_order'][0]['price'] = $sell_price;
 		$action['create_sell_order'][0]['quantity'] = $quantity;
