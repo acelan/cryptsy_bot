@@ -35,6 +35,8 @@ function my_init($data,&$config)
 				{
 					$config["buy_count"]++;
 					$config["sell_count"]--;
+					if($config["sell_count"] < 0)
+						$config["sell_count"] = 0;
 				}
 				else if($config_log["tradetype"] == "Sell")
 				{
@@ -146,19 +148,19 @@ function place_order($data,&$config)
 
 	if( $my_base_coin > 0)
 	{
-		$buy_price = $cur_sell_price*pow($config['stop_lost_percent'],$config['buy_count']+1);
+		$buy_price = $cur_buy_price*pow($config['stop_lost_percent'],$config['buy_count']+1);
 		if( isset($config['min_target_coin']) && ($my_target_coin < $config['min_target_coin'])) // try to buy some coins in low profit rate
-			$buy_price = $cur_sell_price*0.99;
-		$quantity = $my_base_coin/$cur_sell_price*$config['order_proportion'];
+			$buy_price = $cur_buy_price*0.99;
+		$quantity = $my_base_coin/$cur_buy_price*$config['order_proportion'];
 		if($config['round'])
 			$quantity = floor($quantity);
 
 		$action['create_buy_order'][0]['price'] = $buy_price;
-		$action['create_buy_order'][0]['quantity'] = $my_base_coin/$cur_sell_price*$config['order_proportion'];
+		$action['create_buy_order'][0]['quantity'] = $quantity;
 	}
 	if( $my_target_coin > 0)
 	{
-		$sell_price = $cur_buy_price*$config['profit_percent'];
+		$sell_price = $cur_sell_price*$config['profit_percent'];
 		// we don't want to sell too much if we just bought more than 1 time
 		if( $config['buy_count'] == 0)
 			$quantity = $my_target_coin*pow($config['sell_proportion'], 1);
