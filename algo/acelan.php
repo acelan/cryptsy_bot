@@ -160,7 +160,10 @@ function place_order($data,&$config)
 	{
 		$sell_price = $cur_buy_price*$config['profit_percent'];
 		// we don't want to sell too much if we just bought more than 1 time
-		$quantity = $my_target_coin*pow($config['sell_proportion'],$config['buy_count']+1);
+		if( $config['buy_count'] == 0)
+			$quantity = $my_target_coin*pow($config['sell_proportion'], 1);
+		else
+			$quantity = $my_target_coin*pow($config['sell_proportion'],$config['buy_count']);
 		if($config['round'])
 			$quantity = floor($quantity);
 
