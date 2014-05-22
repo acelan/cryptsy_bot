@@ -5,9 +5,46 @@
  * my_done() will be call when all actions are all done - optional
  */
 
+static $json_log = array();
+
 function my_init($data,&$config)
 {
-	$config['min_target_coin'] = 2;
+	global $json_log;
+
+	$config['min_target_coin'] = 3;
+
+	$file = $config['log_filename'];
+	if($file != "")
+	{
+		$file .= ".json";
+		if(!file_exists($file))
+			file_put_contents($file, "");
+
+		$str_log = file_get_contents($file);
+		$json_log = (array)json_decode($str_log);
+
+		// set buy_count and sell_count from log
+		if($config["init_buy_sell_count"] == 0)
+		{
+			if(sizeof($json_log) != 0)
+			{
+				$config_log = (array)$json_log[sizeof($json_log)-1];
+				$config["buy_count"] = $config_log["buy_count"];
+				$config["sell_count"] = $config_log["sell_count"];
+				if($config_log["tradetype"] == "Buy")
+				{
+					$config["buy_count"]++;
+					$config["sell_count"]--;
+				}
+				else if($config_log["tradetype"] == "Sell")
+				{
+					$config["buy_count"] = 0;
+					$config["sell_count"]++;
+				}
+
+			}
+		}
+	}
 }
 
 function my_done($data,&$config)
@@ -16,6 +53,7 @@ function my_done($data,&$config)
 
 function my_algo($data,&$config)
 {
+	global $json_log;
 	$cur_buy_price = $data["cur_buy_price"];
 	$cur_sell_price = $data["cur_sell_price"];
 	$my_orders = $data["my_orders"];
@@ -41,7 +79,23 @@ function my_algo($data,&$config)
 
 				$file = $config['log_filename'];
 				if($file != "")
+				{
 					file_put_contents($file, $my_trade["tradetype"]." ".$my_trade["quantity"]." at price ".$my_trade["tradeprice"]." , total ".$config['base_coin']." ".$my_trade["total"]."\n", FILE_APPEND);
+
+					$file .= ".json";
+					$mydata = array();
+					$mydata["date"] = $my_trade["datetime"];
+					$mydata["label"] = $config["target_coin"]."/".$config["base_coin"];
+					$mydata["tradetype"] = $my_trade["tradetype"];
+					$mydata["price"] = $my_trade["tradeprice"];
+					$mydata["quantity"] = $my_trade["quantity"];
+					$mydata["total"] = $my_trade["total"];
+					$mydata["buy_count"] = $config["buy_count"];
+					$mydata["sell_count"] = $config["sell_count"];
+					$json_log[sizeof($json_log)] = $mydata;
+
+					file_put_contents($file, json_encode($json_log));
+				}
 
 				$order_id = $my_trade["order_id"];
 			}

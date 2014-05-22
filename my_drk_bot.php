@@ -18,11 +18,14 @@ class my_drk_bot extends cryptsy_bot
 
 		$this->config['buy_count'] = 0;
 		$this->config['sell_count'] = 0;
+		$this->config['init_buy_sell_count'] = 0;
 		if (isset($config['init_buy_count'])) {
 			$this->config['buy_count'] = $config['init_buy_count'];
+			$this->config['init_buy_sell_count'] = 1;
 		}
 		if (isset($config['init_sell_count'])) {
 			$this->config['sell_count'] = $config['init_sell_count'];
+			$this->config['init_buy_sell_count'] = 1;
 		}
 
 		$this->config['log_filename'] = '';
@@ -77,11 +80,10 @@ class my_drk_bot extends cryptsy_bot
 	 *		[0] => Array
 	 *		(
 	 *			[orderid] => 39960050
-	 *			[created] => 2014-02-09 04:46:27
-	 *			[ordertype] => Buy
-	 *			[price] => 0.00000163
+	 *			[datetime] => 2014-02-09 04:46:27
+	 *			[tradetype] => Buy
+	 *			[tradeprice] => 0.00000163
 	 *			[quantity] => 43123.00000000
-	 *			[orig_quantity] => 43123.00000000
 	 *			[total] => 0.07029049
 	 *		)
 	 *	)
