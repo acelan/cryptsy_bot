@@ -84,13 +84,13 @@ class Cryptsy
 		{
 			do
 			{
-				sleep(1);
 				$price_data = $this->api_query("marketorders", array("marketid" => $id));
 				if(sizeof( $price_data) == 0)
 					continue;
 				if(sizeof($price_data[$type."orders"]) == 0)
 				{
 					print(".");
+					sleep(1);
 					continue;
 				}
 			} while(0);
