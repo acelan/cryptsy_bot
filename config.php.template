@@ -11,10 +11,20 @@ $config = array(
 						// for doge, should set to 1, otherwise 0
 
 	// import previous status, only one of these variable can be set
-	'init_buy_count'	=> 2,
-	'init_sell_count'	=> 1,
+	// We don't need below 2 variables now if there is a log file, bot will read the final variable from log
+	// But you still can set these 2 variables to overwrite the values read from log file.
+	//'init_buy_count'	=> 2,
+	//'init_sell_count'	=> 1,
 
 	// log file name, set to null string to stop loggin
 	'log_filename'		=> 'log/bot.log',
+
+	// NOTE. set what coin you want to trade, should not leave them empty.
+	'base_coin'		=> '',		// ex. BTC
+	'target_coin'		=> '',		// ex. DRK
+
+	// bot will buy back some target coin when the amount of target coin less than min_target_coin
+	// 0 means don't buy back
+	.min_target_coin	=> 0,
 );
 ?>
