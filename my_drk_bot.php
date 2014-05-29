@@ -34,6 +34,7 @@ class my_drk_bot extends cryptsy_bot
 
 		$this->config['base_coin'] = 'BTC';
 		$this->config['target_coin'] = 'DRK';
+		$this0>config['min_target_coin'] = 3;
 
 		// It's a bot to sell/buy DRK and BTC only
 		$this->set_key($config['public_key'] , $config['private_key'], "DRK/BTC");

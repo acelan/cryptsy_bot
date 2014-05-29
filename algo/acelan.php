@@ -11,8 +11,6 @@ function my_init($data,&$config)
 {
 	global $json_log;
 
-	$config['min_target_coin'] = 3;
-
 	$file = $config['log_filename'];
 	if($file != "")
 	{
