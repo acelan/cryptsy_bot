@@ -8,13 +8,15 @@ $markets = array();
 while(1)
 {
 	$data = $cryptsy->get_marketdata();
-	$markets = array_merge((array)$data["markets"], $markets);
+	$markets = $data["markets"];
 	foreach( $markets as $market)
 	{
 		$count = 0;
 		$b_c = 0;
 		$s_c = 0;
 		$total_btc = 0;
+		if(sizeof($market["recenttrades"]) == 0)
+			continue;
 		$trades = array_reverse($market["recenttrades"]);
 		foreach( $trades as $trade)
 		{
@@ -39,12 +41,14 @@ while(1)
 			$total_btc += $trade["price"]*$trade["quantity"];
 		}
 		// we like waves
-		if((($b_c >= 2) && ($s_c >= 2) && ($market["recenttrades"][0]["price"] > 0.00000010)) || $total_btc > 10)
-			print($market["label"]." - buy_count = ".$b_c." , sell_count = ".$s_c." total btc = ".$total_btc."\n");
+		//if((($b_c >= 2) && ($s_c >= 2) && ($market["recenttrades"][0]["price"] > 0.00000010)) || $total_btc > 10)
+		if($total_btc > 3)
+			if(explode("/",$market["label"])[1] == "BTC")
+				print($market["label"]."(".$trades[sizeof($trades)-1]["price"].") - buy_count = ".$b_c." , sell_count = ".$s_c." total btc = ".$total_btc."\n");
 	}
 	print("=================================================================================\n");
 	// get data once a minute
-	sleep(60);
+	sleep(300);
 }
 
 ?>
