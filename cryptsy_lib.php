@@ -80,22 +80,23 @@ class Cryptsy
 		// TODO: should check $type as well
 
 		// cache the data for 5 seconds
-		if(((time()-$this->price_timestamp) > 5) || ($prev_label != $label))
+		if(((time()-$this->price_timestamp) > 5) || ($prev_label != $label) || (sizeof($this->price_data[$type."orders"]) == 0))
 		{
 			do
 			{
-				$price_data = $this->api_query("marketorders", array("marketid" => $id));
-				if(sizeof( $price_data) == 0)
+				$this->price_data = $this->api_query("marketorders", array("marketid" => $id));
+				if(sizeof( $this->price_data) == 0)
 					continue;
-				if(sizeof($price_data[$type."orders"]) == 0)
+				if(sizeof($this->price_data[$type."orders"]) == 0)
 				{
 					print(".");
 					sleep(1);
 					continue;
 				}
-			} while(0);
+				else
+					break;
+			} while(1);
 			$this->price_timestamp = time();
-			$this->price_data = $price_data;
 			$prev_label = $label;
 		}
 
