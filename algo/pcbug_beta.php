@@ -55,6 +55,7 @@ function my_done($data,&$config)
 
 function my_algo($data,&$config)
 {
+	global $json_log;
 	static $show_status = 0;
 	$cur_buy_price = $data["cur_buy_price"];
 	$cur_sell_price = $data["cur_sell_price"];
