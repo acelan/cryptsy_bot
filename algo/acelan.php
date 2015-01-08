@@ -38,7 +38,9 @@ function my_init($data,&$config)
 				}
 				else if($config_log["tradetype"] == "Sell")
 				{
-					$config["buy_count"] = 0;
+					$config["buy_count"]--;
+					if($config["buy_count"] < 0)
+						$config["buy_count"] = 0;
 					$config["sell_count"]++;
 				}
 
