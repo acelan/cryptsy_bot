@@ -8,6 +8,7 @@ class Cryptsy
 		$this->secret = $secret;
 		$this->price_timestamp = 0;
 		$this->markets = $this->api_query("getmarkets");
+		$this->prev_orders = 0;
 		if(sizeof($this->markets) == 0) { print_r($this->log); exit(0); }
 	}
 	/*
@@ -131,7 +132,17 @@ class Cryptsy
 	 *         )   
 	 * )
 	 */
-	public function get_orders($label) { return $this->api_query("myorders", array("marketid" => $this->get_marketid($label))); }
+	public function get_orders($label)
+	{
+		$orders = $this->api_query("myorders", array("marketid" => $this->get_marketid($label)));
+		if( ( $this->prev_orders != -1) && ( $this->prev_orders != sizeof($orders)))
+		{
+			sleep(1);
+			$orders = $this->api_query("myorders", array("marketid" => $this->get_marketid($label)));
+		}
+		$this->prev_orders = sizeof($orders);
+		return $orders;
+	}
 	/*
 	 * Array
 	 * (
@@ -139,8 +150,16 @@ class Cryptsy
 	 *     [1] => Your order #34387162 has been cancelled.
 	 * )
 	 */
-	public function cancel_market_orders($label) { return $this->api_query("cancelmarketorders", array("marketid" => $this->get_marketid($label))); }
-	public function cancel_all_orders() { return $this->api_query("cancelallorders"); }
+	public function cancel_market_orders($label)
+	{
+		$this->prev_orders = -1;
+		return $this->api_query("cancelmarketorders", array("marketid" => $this->get_marketid($label)));
+	}
+	public function cancel_all_orders()
+	{
+		$this->prev_orders = -1;
+		return $this->api_query("cancelallorders");
+	}
 	public function get_mytrades($label) { return $this->api_query("mytrades", array("marketid" => $this->get_marketid($label),"limit" => 10)); }
 	/*
 	 * Array
@@ -293,6 +312,7 @@ class Cryptsy
 	private $query_count;
 	private $price_timestamp;
 	private $price_data;
+	private $prev_orders;
 };
 
 ?>
